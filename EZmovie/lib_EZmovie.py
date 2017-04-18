@@ -56,7 +56,10 @@ class EZmovie():
 				data = np.log10(data)
 			else:
 				pass
-			ezp.plot_map(ax,diag,coord1,coord2,data,current_date)
+			if diag['type'] == 'map':
+				ezp.plot_map(ax,diag,coord1,coord2,data,current_date)
+			elif diag['type'] == 'section':
+				ezp.plot_section(ax,diag,coord1,coord2,data,current_date)
 
 		gifname = self.plotdir + 'frame_' + current_date.isoformat() + '.gif'
 		pngname = self.plotdir + 'frame_' + current_date.isoformat() + '.png'
@@ -77,34 +80,37 @@ class EZmovie():
 
 		ncfile = diag['run']['directory'] + str(current_date.year) + '/' + diag['run']['name'] + '_' + diag['filetype'] + '_' + current_date.isoformat() + '.nc'
 		#print 'reading file ', ncfile
+		tmp = self.readnc(ncfile,diag['variable'])
+
+		# load grid first time only
+		if self.grd is None:
+			self.grd = pyroms.grid.get_ROMS_grid(diag['run']['grid'])
+		# reload if different grid (allows multiple grid in one movie)
+		if self.grd.name != diag['run']['grid']:
+			self.grd = pyroms.grid.get_ROMS_grid(diag['run']['grid'])
 
 		if diag['type'] == 'map':
 			if diag['level'] is not None and diag['depth'] is not None:
 				exit('you can choose a level or a depth')
 			if diag['level'] is not None:
-				tmp = self.readnc(ncfile,diag['variable'])
 				if len(tmp.shape) == 2:
+					# variable is 2d (ssh,...)
 					data = tmp
 				elif len(tmp.shape) == 3:
 					data = tmp[diag['level'],:]
 
-				# load first time only
-				if self.grd is None:
-					self.grd = pyroms.grid.get_ROMS_grid(diag['run']['grid'])
-				# reload if different grid (allows multiple grid in one movie)
-				if self.grd.name != diag['run']['grid']:
-					self.grd = pyroms.grid.get_ROMS_grid(diag['run']['grid'])
-
 				coord1 = self.grd.hgrid.lon_rho
 				coord2 = self.grd.hgrid.lat_rho
 			if diag['depth'] is not None:
-				# call pyroms zslice
-				pass
+				data, coord1, coord2 = pyroms.tools.zslice(tmp, diag['depth'], self.grd, Cpos='rho', vert=False, mode='linear')
 		elif diag['type'] == 'section':
-			# pyroms islice, jslice
+			if diag['jindex'] is not None and diag['iindex'] is not None:
+                                exit('you can choose a section along i or j')
+			if diag['jindex'] is not None:
+				data, coord2, coord1, coord3 = pyroms.tools.jslice(tmp, diag['jindex'], self.grd)
+			if diag['iindex'] is not None:
+				data, coord2, coord3, coord1 = pyroms.tools.islice(tmp, diag['iindex'], self.grd)
 			pass
-
-
 		return coord1, coord2, data
 
 	def readnc(self,myfile,myvar,myframe=None):

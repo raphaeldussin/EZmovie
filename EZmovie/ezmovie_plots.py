@@ -56,3 +56,18 @@ def plot_map(ax,diag,coord1,coord2,data,current_date):
         plt.title(diag['label'] + ' ' + current_date.strftime(fmt))
 
 	return ax
+
+def plot_section(ax,diag,coord1,coord2,data,current_date):
+        ''' single plot '''
+        contours, norm, ticks = setup_contour(diag['vmin'],diag['vmax'],40)
+        cbarfmt = setup_colorbar_fmt(data)
+
+	ax.set_axis_bgcolor('grey')
+        C = ax.contourf(coord1,coord2,data,contours,cmap=diag['pal'],norm=norm,extend='both')
+	if diag.has_key('max_depth'):
+		ax.set_ylim(-diag['max_depth'],coord2[-1].min())
+        cbar = plt.colorbar(C,format=cbarfmt,shrink=0.8,ticks=ticks)
+	fmt = "%Y %m %d"
+        plt.title(diag['label'] + ' ' + current_date.strftime(fmt))
+
+        return ax
