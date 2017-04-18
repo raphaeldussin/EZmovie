@@ -71,7 +71,7 @@ class EZmovie():
 
 	def make_animated_gif(self,fileout):
 		os.system(' rm  ' + self.plotdir + fileout)
-		os.system(' gifsicle -d 20 -l ' + self.plotdir + '*.gif -o ' + self.plotdir + fileout)
+		os.system(' gifsicle -d 20 -l ' + self.plotdir + 'frame*.gif -o ' + self.plotdir + fileout)
 		os.system(' rm ' + self.plotdir + 'frame*gif')
 		return None
 
