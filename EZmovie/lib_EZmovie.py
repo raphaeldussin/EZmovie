@@ -52,10 +52,9 @@ class EZmovie():
 			this_subplot = diag['col'] + (diag['row'] - 1) * self.ncol
 			ax = plt.subplot(self.nrow,self.ncol,this_subplot)
 			coord1, coord2, data = self.read_data(diag,current_date)
-			if diag['operation'] == 'log10':
-				data = np.log10(data)
-			else:
-				pass
+			if diag.has_key('operation'):
+				if diag['operation'] == 'log10':
+					data = np.log10(data)
 			if diag['type'] == 'map':
 				ezp.plot_map(ax,diag,coord1,coord2,data,current_date)
 			elif diag['type'] == 'section':
@@ -90,9 +89,9 @@ class EZmovie():
 			self.grd = pyroms.grid.get_ROMS_grid(diag['run']['grid'])
 
 		if diag['type'] == 'map':
-			if diag['level'] is not None and diag['depth'] is not None:
+			if diag.has_key('level') and diag.has_key('depth'):
 				exit('you can choose a level or a depth')
-			if diag['level'] is not None:
+			if diag.has_key('level'):
 				if len(tmp.shape) == 2:
 					# variable is 2d (ssh,...)
 					data = tmp
@@ -101,14 +100,14 @@ class EZmovie():
 
 				coord1 = self.grd.hgrid.lon_rho
 				coord2 = self.grd.hgrid.lat_rho
-			if diag['depth'] is not None:
+			if diag.has_key('depth'):
 				data, coord1, coord2 = pyroms.tools.zslice(tmp, diag['depth'], self.grd, Cpos='rho', vert=False, mode='linear')
 		elif diag['type'] == 'section':
-			if diag['jindex'] is not None and diag['iindex'] is not None:
+			if diag.has_key('jindex') and diag.has_key('iindex'):
                                 exit('you can choose a section along i or j')
-			if diag['jindex'] is not None:
+			if diag.has_key('jindex'):
 				data, coord2, coord1, coord3 = pyroms.tools.jslice(tmp, diag['jindex'], self.grd)
-			if diag['iindex'] is not None:
+			if diag.has_key('iindex'):
 				data, coord2, coord3, coord1 = pyroms.tools.islice(tmp, diag['iindex'], self.grd)
 			pass
 		return coord1, coord2, data

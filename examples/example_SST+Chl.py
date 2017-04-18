@@ -6,8 +6,8 @@ import matplotlib.cm as cm
 run1 = {'grid':'CCS1','name':'CCS1-RD.NVOcobalt29R','directory':'/Volumes/P7/ROMS/CCS1/CCS1-RD.NVOcobalt29R/'}
 run2 = {'grid':'CCS1','name':'CCS1-RD.NVOcobalt31S','directory':'/Volumes/P7/ROMS/CCS1/CCS1-RD.NVOcobalt31S/'}
 
-sst      = {'variable':'temp','operation':None,   'type':'map','level':49,'depth':None,'vmin':10,'vmax':30,'filetype':'avg','pal':cm.gist_ncar}
-surf_chl = {'variable':'chl', 'operation':'log10','type':'map','level':49,'depth':None,'vmin':-2,'vmax':2, 'filetype':'dia','pal':cm.bwr}
+sst      = {'variable':'temp','type':'map','level':49,'vmin':10,'vmax':30,'filetype':'avg','pal':cm.gist_ncar}
+surf_chl = {'variable':'chl','operation':'log10','type':'map','level':49,'vmin':-2,'vmax':2, 'filetype':'dia','pal':cm.bwr}
 
 diag1 = {'label':'SST 2PS',           'run':run1,'row':1,'col':1}
 diag2 = {'label':'Surface logChl 2PS','run':run1,'row':1,'col':2}

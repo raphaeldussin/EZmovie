@@ -6,8 +6,8 @@ import matplotlib.cm as cm
 run1 = {'grid':'CCS1','name':'CCS1-RD.NVOcobalt29R','directory':'/Volumes/P7/ROMS/CCS1/CCS1-RD.NVOcobalt29R/'}
 run2 = {'grid':'CCS1','name':'CCS1-RD.NVOcobalt31S','directory':'/Volumes/P7/ROMS/CCS1/CCS1-RD.NVOcobalt31S/'}
 
-tsec1      = {'variable':'temp','operation':None,   'type':'section','iindex':None,'jindex':275,'vmin':-1,'vmax':20,'filetype':'avg','pal':cm.gist_ncar,'max_depth':200}
-chl_sec1   = {'variable':'chl', 'operation':'log10','type':'section','iindex':None,'jindex':275,'vmin':-2,'vmax':2, 'filetype':'dia','pal':cm.gist_ncar,'max_depth':200}
+tsec1      = {'variable':'temp','type':'section','jindex':275,'vmin':-1,'vmax':20,'filetype':'avg','pal':cm.gist_ncar,'max_depth':200}
+chl_sec1   = {'variable':'chl', 'operation':'log10','type':'section','jindex':275,'vmin':-2,'vmax':2, 'filetype':'dia','pal':cm.gist_ncar,'max_depth':200}
 
 diag1 = {'label':'section Temp   2PS','run':run1,'row':1,'col':1}
 diag2 = {'label':'section logChl 2PS','run':run1,'row':1,'col':2}
