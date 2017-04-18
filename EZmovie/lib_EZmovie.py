@@ -13,6 +13,7 @@ class EZmovie():
 		self.plotdir = plotdir
 		self.ncol=0
 		self.nrow=0
+		self.grd=None
 		return
 
 	def __call__(self,fileout,start_date,end_date,means='no',step=5):
@@ -31,7 +32,7 @@ class EZmovie():
 			pass
 
 		for current_date in list_dates:
-			print current_date.isoformat()
+			print 'working on ', current_date.isoformat()
 			self.write_one_frame(current_date)
 
 		self.make_animated_gif(fileout)
@@ -51,11 +52,16 @@ class EZmovie():
 			this_subplot = diag['col'] + (diag['row'] - 1) * self.ncol
 			ax = plt.subplot(self.nrow,self.ncol,this_subplot)
 			coord1, coord2, data = self.read_data(diag,current_date)
+			if diag['operation'] == 'log10':
+				data = np.log10(data)
+			else:
+				pass
 			ezp.plot_map(ax,diag,coord1,coord2,data,current_date)
 
 		gifname = self.plotdir + 'frame_' + current_date.isoformat() + '.gif'
 		pngname = self.plotdir + 'frame_' + current_date.isoformat() + '.png'
 		plt.savefig(pngname,bbox_inches='tight')
+		plt.close()
 		os.system(' convert ' + pngname + ' ' + gifname)
 		os.system(' rm ' + pngname )
 		return None
@@ -70,7 +76,7 @@ class EZmovie():
 		''' read the data for each diag '''
 
 		ncfile = diag['run']['directory'] + str(current_date.year) + '/' + diag['run']['name'] + '_' + diag['filetype'] + '_' + current_date.isoformat() + '.nc'
-		print 'reading file ', ncfile
+		#print 'reading file ', ncfile
 
 		if diag['type'] == 'map':
 			if diag['level'] is not None and diag['depth'] is not None:
@@ -82,9 +88,15 @@ class EZmovie():
 				elif len(tmp.shape) == 3:
 					data = tmp[diag['level'],:]
 
-				grd = pyroms.grid.get_ROMS_grid(diag['run']['grid'])
-				coord1 = grd.hgrid.lon_rho
-				coord2 = grd.hgrid.lat_rho
+				# load first time only
+				if self.grd is None:
+					self.grd = pyroms.grid.get_ROMS_grid(diag['run']['grid'])
+				# reload if different grid (allows multiple grid in one movie)
+				if self.grd.name != diag['run']['grid']:
+					self.grd = pyroms.grid.get_ROMS_grid(diag['run']['grid'])
+
+				coord1 = self.grd.hgrid.lon_rho
+				coord2 = self.grd.hgrid.lat_rho
 			if diag['depth'] is not None:
 				# call pyroms zslice
 				pass
