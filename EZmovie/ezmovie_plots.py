@@ -53,7 +53,11 @@ def plot_map(ax,diag,coord1,coord2,data,current_date=None,current_step=None):
         bmap.fillcontinents(color='grey',lake_color='white')
 
         C = ax.contourf(coord1,coord2,data,contours,cmap=diag['pal'],norm=norm,extend='both')
-        cbar = plt.colorbar(C,format=cbarfmt,shrink=0.8,ticks=ticks)
+	if diag.has_key('cbar_shrink'):
+		cbar_shrink = diag['cbar_shrink']
+	else:
+		cbar_shrink = 1.0
+        cbar = plt.colorbar(C,format=cbarfmt,shrink=cbar_shrink,ticks=ticks)
 	fmt = "%Y %m %d"
 	if current_date is not None:
         	plt.title(diag['label'] + ' ' + current_date.strftime(fmt))
