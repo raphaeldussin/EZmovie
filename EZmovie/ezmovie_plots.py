@@ -25,7 +25,7 @@ def setup_colorbar_fmt(data):
                 cbarfmt = '%.2f'
         return cbarfmt
 
-def plot_map(ax,diag,coord1,coord2,data,current_date):
+def plot_map(ax,diag,coord1,coord2,data,current_date=None,current_step=None):
 	''' single plot '''
 	contours, norm, ticks = setup_contour(diag['vmin'],diag['vmax'],40)
 	cbarfmt = setup_colorbar_fmt(data)
@@ -46,14 +46,19 @@ def plot_map(ax,diag,coord1,coord2,data,current_date):
                 meridians = np.arange(240.,340.,10.)
                 bmap.drawmeridians(meridians,labels=[0,0,0,1],fontsize=10)
         else:
-                pass
+		# default : autoguess domain
+                bmap = Basemap(projection='cyl',llcrnrlat=coord2.min(),urcrnrlat=coord2.max(), \
+		               llcrnrlon=coord1.min(), urcrnrlon=coord1.max(),resolution='c')
         bmap.drawcoastlines()
         bmap.fillcontinents(color='grey',lake_color='white')
 
         C = ax.contourf(coord1,coord2,data,contours,cmap=diag['pal'],norm=norm,extend='both')
         cbar = plt.colorbar(C,format=cbarfmt,shrink=0.8,ticks=ticks)
 	fmt = "%Y %m %d"
-        plt.title(diag['label'] + ' ' + current_date.strftime(fmt))
+	if current_date is not None:
+        	plt.title(diag['label'] + ' ' + current_date.strftime(fmt))
+	if current_step is not None:
+        	plt.title(diag['label'] + ' ' + str(current_step))
 
 	return ax
 

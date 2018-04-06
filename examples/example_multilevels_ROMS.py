@@ -34,4 +34,4 @@ end = dt.datetime(1996,12,27)
 #end = dt.datetime(2006,12,30)
 
 movie = lez.EZmovie(diags,plotdir='/Volumes/P4/workdir/raphael/Movies_EZ/')
-movie('multilevels_T_Chl.gif',start,end)
+movie.ROMS_movie('multilevels_T_Chl.gif',start,end)

@@ -26,4 +26,4 @@ end = dt.datetime(1996,12,27)
 #end = dt.datetime(2006,12,30)
 
 movie = lez.EZmovie(diags,plotdir='/Volumes/P4/workdir/raphael/Movies_EZ/')
-movie('compare_2PS-3PS.gif',start,end)
+movie.ROMS_movie('compare_2PS-3PS.gif',start,end)
